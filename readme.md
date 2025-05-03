@@ -11,3 +11,6 @@ It handles:
 ## 2. 🔒 Hiding `.php` Extensions
 - Allows accessing `login` instead of `login.php` in URLs.
 
+## 📚 App.js Overview – eLearning Platform Routing
+
+This file sets up the routing structure for your React-based eLearning platform, using **React Router v6**
