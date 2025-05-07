@@ -1,4 +1,4 @@
-import { Children } from "react"
+
 import { Navigate,BrowserRouter as Router,Routes,Route } from "react-router-dom"
 import { ToastContainer } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css'
@@ -13,13 +13,13 @@ import Home from "./pages/dashboard/Home"
 import Login from "./pages/Login"
 
 const App = () => {
-  // const isAuthenticated = ()=>{
-  //   return !!localStorage.getItem('token')
-  // }
-
-  const isAuthenticated = () => {   
-    return false;
+  const isAuthenticated = ()=>{
+    return !!localStorage.getItem('user')
   }
+
+  // const isAuthenticated = () => {   
+  //   return false;
+  // }
   
   const protectedRoutes = (children) => {
     return isAuthenticated() ? children : <Navigate to="/Login" />

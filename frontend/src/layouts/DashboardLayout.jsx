@@ -1,6 +1,19 @@
-import {Outlet} from 'react-router-dom'
+import {Outlet,useNavigate} from 'react-router-dom'
+import { useEffect } from 'react'
+import checkSession from '../utils/checkSession'
 
 const DashboardLayout = () => {
+  const navigate = useNavigate()
+  useEffect(()=> {
+    const verifySession = async ()=>{
+      const isActive = await checkSession();
+      if(!isActive){
+        localStorage.removeItem('user')
+        navigate('/login')
+      }
+    }
+    verifySession()
+  },[])
   return (
     <>
         <div className='flex flex-col h-screen'>
