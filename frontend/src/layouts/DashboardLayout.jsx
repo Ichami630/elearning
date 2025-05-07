@@ -13,7 +13,7 @@ const DashboardLayout = () => {
       }
     }
     verifySession()
-  },[])
+  },[navigate])
   return (
     <>
         <div className='flex flex-col h-screen'>
