@@ -4,6 +4,7 @@ include_once '../connection.php'; // Include the database connection file
 
 class Option {
     private int $id;
+    private int $departmentId;
     private string $name;
 
     protected $database;
@@ -13,6 +14,8 @@ class Option {
     }
     // Getter and setter methods for private properties
     public function getId(): int { return $this->id; }
+    public function getDepartmentId(): int { return $this->departmentId; }
+    public function setDepartmentId(int $departmentId): void { $this->departmentId = $departmentId; }
     public function getName(): string { return $this->name; }
     public function setName(string $name): void { $this->name = $name; }
     // Method to select an option by ID
@@ -31,9 +34,9 @@ class Option {
     }
     // Method to insert a new option into the database
     public function insert(): bool {
-        $sql = "INSERT INTO options (name) VALUES (?)";
+        $sql = "INSERT INTO options (department_id,name) VALUES (?,?)";
         $stmt = $this->database->prepare($sql);
-        $stmt->bind_param('s', $this->name);
+        $stmt->bind_param('is', $this->departmentId,$this->name);
         if ($stmt->execute()) {
             return true;
         } else {
@@ -74,6 +77,15 @@ class Option {
             $options[] = $option; // Add each option to the array
         }
         return $options; // Return the array of options
+    }
+    // Method to check if an option name already exists in the database
+    public function isOptionNameTaken(string $name): bool {
+        $sql = "SELECT * FROM options WHERE name = ?";
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param('s', $name);
+        $stmt->execute();
+        $result = $stmt->get_result(); // Get the result set
+        return $result->num_rows > 0; // Return true if option name exists, false otherwise
     }
 
 }
