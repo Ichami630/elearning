@@ -6,7 +6,7 @@ const api = axios.create({
         'Content-Type': 'application/json',
         'Accept': 'application/json',
     },
-    // withCredentials: true, //to allow sessions from PHP
+    withCredentials: true, //to allow sessions from PHP
 
 });
 

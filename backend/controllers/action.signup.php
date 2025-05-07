@@ -25,16 +25,17 @@
         $user->setPassword($password);
         $user->setRole(trim($role));
         $user->setTitle(trim($title));
-        $user->setDepartmentId($departmentId);
-        $user->setOptionId(trim($optionId));
-        $user->setLevelId(trim($levelId));
+        $user->setDepartmentId(is_numeric($departmentId) ? (int)$departmentId : null);
+        $user->setOptionId(is_numeric($optionId) ? (int)$optionId : null);
+        $user->setLevelId(is_numeric($levelId) ? (int)$levelId : null);
+
 
         //check whether the email is already taken
         if ($user->isEmailTaken($email)){
             echo json_encode([
                 "success" => false,
-                "message" => "Email already taken."]);
-        }exit;
+                "message" => "Email already taken."]);exit;
+        }
         //check if the user is created successfully
         if($user->insert()){
             echo json_encode([

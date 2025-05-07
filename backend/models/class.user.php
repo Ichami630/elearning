@@ -40,9 +40,9 @@ class User{
     public function setEmail(string $email): void{ $this->email = $email;}
     public function setRole(string $role): void { $this->role = $role;}
     public function setTitle(string $title): void { $this->title = $title;}
-    public function setDepartmentId(int $deptId): void { $this->departmentId = $deptId;}
-    public function setOptionId(int $optionId): void { $this->optionId = $optionId;}
-    public function setLevelId(int $levelId): void { $this->levelId = $levelId;}
+    public function setDepartmentId(?int $deptId): void { $this->departmentId = $deptId;}
+    public function setOptionId(?int $optionId): void { $this->optionId = $optionId;}
+    public function setLevelId(?int $levelId): void { $this->levelId = $levelId;}
     public function setPassword(string $password): void { $this->password = password_hash($password,PASSWORD_BCRYPT);}
 
     //method to select a user by id

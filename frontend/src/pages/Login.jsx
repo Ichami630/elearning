@@ -2,13 +2,11 @@ import { useState } from 'react';
 import api from '../utils/api';
 import {toast} from 'react-toastify';
 import image1 from '../assets/login1.jpg'; // Make sure this image exists in the correct path
-import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,16 +16,13 @@ const Login = () => {
         password,
       });
   
-      // Log full response for debugging
-      console.log('Login response:', response);
-  
       // Check if the response has data and user
       if (response.data && response.data.status === 'success' && response.data.user) {
         const { id, role, title, name } = response.data.user;
   
         // Store user info
         localStorage.setItem('user', JSON.stringify({ id, role, title, name }));
-        navigate('/');
+        window.location.href = '/'
       } else {
         toast.error(response.data.message || 'Login failed. Please try again.');
       }

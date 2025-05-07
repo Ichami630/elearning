@@ -1,4 +1,9 @@
 <?php
+    // Allow cross-origin requests
+    header("Access-Control-Allow-Origin: http://localhost:5173");
+    header("Access-Control-Allow-Methods: POST,GET, OPTIONS");
+    header("Access-Control-Allow-Headers: Content-Type, Authorization");
+    header("Access-control-Allow-Credentials: true");   
     session_start();
 
     if(isset($_SESSION['id']) && isset($_SESSION['expiry'])){
