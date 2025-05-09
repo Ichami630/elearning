@@ -6,6 +6,7 @@ class Course {
     private int $id;
     private string $title;
     private string $code;
+    private ?string $thumbnail;
     private string $courseType;
 
     private int $lastInsertId;
@@ -22,10 +23,12 @@ class Course {
     public function getId(): int { return $this->id; }
     public function getTitle(): string { return $this->title; }
     public function getCode(): string { return $this->code; }
+    public function getThumbnail(): string { return $this->thumbnail; }
     public function getCourseType(): string { return $this->courseType; }
     public function getLastInsertId(): int { return $this->lastInsertId; }
     public function setTitle(string $title): void { $this->title = $title; }
     public function setCode(string $code): void { $this->code = $code; }
+    public function setThumbnail(string $thumbnail): void { $this->thumbnail = $thumbnail; }
     public function setCourseType(string $courseType): void { $this->courseType = $courseType; }
 
     //method to select a course by id
@@ -41,14 +44,15 @@ class Course {
             $this->id = $course->id;
             $this->title = $course->title;
             $this->code = $course->code;
+            $this->thumbnail = $course->thumbnail;
             $this->courseType = $course->course_type;
         }
     }
     //method to insert a new course into the database
     public function insert(): bool {
-        $sql = "INSERT INTO courses (title,code,course_type) VALUES (?,?,?)";
+        $sql = "INSERT INTO courses (title,code,thumbnail,course_type) VALUES (?,?,?,?)";
         $stmt = $this->database->prepare($sql);
-        $stmt->bind_param('sss', $this->title,$this->code,$this->courseType);
+        $stmt->bind_param('ssss', $this->title,$this->code,$this->thumbnail,$this->courseType);
         if ($stmt->execute()) {
             $this->lastInsertId = $stmt->insert_id; // get the last inserted id
             return true;
@@ -59,9 +63,9 @@ class Course {
 
     //method to update an existing course in the database
     public function update(): bool {
-        $sql = "UPDATE courses SET title = ?, code = ?,course_type = ? WHERE id = ?";
+        $sql = "UPDATE courses SET title = ?, code = ?,thumbnail = ?,course_type = ? WHERE id = ?";
         $stmt = $this->database->prepare($sql);
-        $stmt->bind_param('sssi', $this->title, $this->code, $this->courseType, $this->id);
+        $stmt->bind_param('ssssi', $this->title, $this->code,$this->thumbnail, $this->courseType, $this->id);
         return $stmt->execute();
     }
 
@@ -72,21 +76,45 @@ class Course {
         $stmt->bind_param('i', $id);
         return $stmt->execute();
     }
-
-    //method to select all courses
-    public function getAllCourses(){
+    //get courseThumnail,title
+    public function getAllCourseNameThumbnail(): array{
         $sql = "SELECT * FROM courses";
         $stmt = $this->database->prepare($sql);
         $stmt->execute();
         $result = $stmt->get_result();
-
-        $courses = []; //array to hold all courses
-        while($course = $result->fetch_object()){
-            $courses[] = $course; //add each course to the array    
-        }
-
-        return $courses; //return the array of courses
+        return $result->fetch_all(MYSQLI_ASSOC);
     }
+
+    //get distinct courses a lecturer teaches
+    public function getAllCourseOfLecturer(int $lecturerId): array{
+        $sql = "SELECT DISTINCT c.id,c.title,c.code,c.thumbnail
+        FROM courses c
+        JOIN course_offerings co ON c.id = co.course_id
+        WHERE co.instructor_id = ?";
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param('i',$lecturerId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    //get courses a student is currently enrolled in
+    public function getAllStudentEnrolledCourses(int $studentId): array{
+        $sql = "SELECT c.id, c.title, c.code, c.thumbnail
+        FROM enrollments e
+        JOIN course_offerings co ON e.course_offering_id = co.id
+        JOIN courses c ON co.course_id = c.id
+        WHERE e.student_id = ?";
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param("i",$studentId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+
 }
 
 //course offerings class

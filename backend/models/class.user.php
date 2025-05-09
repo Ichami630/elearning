@@ -67,6 +67,17 @@ class User{
         }
     }
 
+    //select count total based on roles
+    public function selectCount(string $role): int{
+        $sql = "SELECT COUNT(*) AS tot FROM users WHERE role = ?";
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param("s",$role);
+        $stmt->execute();
+        $result = $stmt->get_result(); //get the result set
+        $rows = $result->fetch_object(); //fetch the object
+        return (int)$rows->tot; //return the total count
+    }
+
     // method to delete a user by id
     public function delete(int $id){
         $sql = "DELETE FROM users WHERE id = ?";

@@ -11,6 +11,7 @@ import MainLayout from "./layouts/MainLayout"
 import NotFound from "./components/NotFound"
 import Home from "./pages/dashboard/Home"
 import Login from "./pages/Login"
+import Logout from "./pages/dashboard/logout"
 
 const App = () => {
   const isAuthenticated = ()=>{
@@ -39,7 +40,8 @@ const App = () => {
             protectedRoutes(<DashboardLayout />)
           }>
             <Route index element={<Home />} />
-            <Route path="/dashboard/test" element={<NotFound />} />
+            <Route path="/logout" element={<Logout/>}/>
+            <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
       </Router>
