@@ -11,6 +11,7 @@ import MainLayout from "./layouts/MainLayout"
 import NotFound from "./components/NotFound"
 import Home from "./pages/dashboard/Home"
 import Login from "./pages/Login"
+import Teacher from "./pages/dashboard/teacher"
 import Logout from "./pages/dashboard/logout"
 
 const App = () => {
@@ -41,6 +42,7 @@ const App = () => {
           }>
             <Route index element={<Home />} />
             <Route path="/logout" element={<Logout/>}/>
+            <Route path="/dashboard/teachers" element={<Teacher />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>

@@ -34,7 +34,7 @@ const menuItems = [
     title: "MENU",
     items: [
       { icon: "FaHouseUser", label: "Home", href: "/", visible: ["admin", "lecturer", "student"] },
-      { icon: "FaGraduationCap", label: "Teachers", href: "/dashboard/teachers", visible: ["admin"] },
+      { icon: "FaGraduationCap", label: "Teachers", href: "/dashboard/teachers", visible: ["admin","lecturer","student"] },
       { icon: "FaUser", label: "Students", href: "/dashboard/students", visible: ["admin", "lecturer"] },
       { icon: "FaBook", label: "Subjects", href: "/dashboard/subjects", visible: ["admin", "lecturer"] },
       { icon: "FaUserSlash", label: "Classes", href: "/dashboard/classes", visible: ["admin", "lecturer"] },

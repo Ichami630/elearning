@@ -1,6 +1,8 @@
 <?php
-
-    include_once '../config/cors.php'; // Include the CORS configuration file
+    header("Access-Control-Allow-Origin: http://localhost:5173");
+    header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+    header("Access-Control-Allow-Headers: Content-Type, Authorization");
+    header("Access-Control-Allow-Credentials: true");
 
     if($_SERVER['REQUEST_METHOD'] == 'POST'){
         include_once '../connection.php'; // Include the database connection file
