@@ -1,54 +1,29 @@
 import React from "react";
-import {
-  FaHouseUser,
-  FaGraduationCap,
-  FaUser,
-  FaBook,
-  FaUserSlash,
-  FaStickyNote,
-  FaBookOpen,
-  FaBullhorn,
-  FaCommentDots,
-  FaUserCircle,
-  FaCaretRight,
-} from "react-icons/fa";
+
 import { NavLink } from "react-router-dom";
 
-// Map icon names to actual components
-const icons = {
-  FaHouseUser,
-  FaGraduationCap,
-  FaUser,
-  FaBook,
-  FaUserSlash,
-  FaStickyNote,
-  FaBookOpen,
-  FaBullhorn,
-  FaCommentDots,
-  FaUserCircle,
-  FaCaretRight,
-};
 
 const menuItems = [
   {
     title: "MENU",
     items: [
-      { icon: "FaHouseUser", label: "Home", href: "/", visible: ["admin", "lecturer", "student"] },
-      { icon: "FaGraduationCap", label: "Teachers", href: "/dashboard/teachers", visible: ["admin","lecturer","student"] },
-      { icon: "FaUser", label: "Students", href: "/dashboard/students", visible: ["admin", "lecturer"] },
-      { icon: "FaBook", label: "Subjects", href: "/dashboard/subjects", visible: ["admin", "lecturer"] },
-      { icon: "FaUserSlash", label: "Classes", href: "/dashboard/classes", visible: ["admin", "lecturer"] },
-      { icon: "FaBookOpen", label: "Quiz", href: "/dashboard/quiz", visible: ["admin", "lecturer", "student"] },
-      { icon: "FaStickyNote", label: "Assignments", href: "/dashboard/assignments", visible: ["admin", "lecturer", "student"] },
-      { icon: "FaCommentDots", label: "Messages", href: "/dashboard/messages", visible: ["admin", "lecturer", "student"] },
-      { icon: "FaBullhorn", label: "Announcements", href: "/dashboard/announcements", visible: ["admin", "lecturer", "student"] },
+      { icon: "/home.png", label: "Home", href: "/", visible: ["admin", "lecturer", "student"] },
+      { icon: "/teacher.png", label: "Teachers", href: "/dashboard/teachers", visible: ["admin","lecturer","student"] },
+      { icon: "/student.png", label: "Students", href: "/dashboard/students", visible: ["admin", "lecturer"] },
+      { icon: "/subject.png", label: "Courses", href: "/dashboard/subjects", visible: ["admin", "lecturer"] },
+      { icon: "/lesson.png", label: "Enrollment", href: "/dashboard/subjects", visible: ["student"] },
+      { icon: "/class.png", label: "Classes", href: "/dashboard/classes", visible: ["admin", "lecturer"] },
+      { icon: "/exam.png", label: "Quiz", href: "/dashboard/quiz", visible: ["admin", "lecturer", "student"] },
+      { icon: "/assignment.png", label: "Assignments", href: "/dashboard/assignments", visible: ["admin", "lecturer", "student"] },
+      { icon: "/message.png", label: "Messages", href: "/dashboard/messages", visible: ["admin", "lecturer", "student"] },
+      { icon: "/announcement.png", label: "Announcements", href: "/dashboard/announcements", visible: ["admin", "lecturer", "student"] },
     ],
   },
   {
     title: "OTHER",
     items: [
-      { icon: "FaUserCircle", label: "Profile", href: "/dashboard/profile", visible: ["admin", "lecturer", "student"] },
-      { icon: "FaCaretRight", label: "Logout", href: "/logout", visible: ["admin", "lecturer", "student"] },
+      { icon: "/profile.png", label: "Profile", href: "/dashboard/profile", visible: ["admin", "lecturer", "student"] },
+      { icon: "/logout.png", label: "Logout", href: "/logout", visible: ["admin", "lecturer", "student"] },
     ],
   },
 ];
@@ -66,7 +41,6 @@ const Menu = () => {
           </span>
           {section.items.map((item) => {
             if (item.visible.includes(role)) {
-              const IconComponent = icons[item.icon];
               return (
                 <NavLink
                   to={item.href}
@@ -79,15 +53,7 @@ const Menu = () => {
                     }`
                   }
                 >
-                  {IconComponent && (
-                    <IconComponent
-                      className={`w-5 h-5 ${
-                        item.href === window.location.pathname
-                          ? "text-white"
-                          : "text-gray-400"
-                      }`}
-                    />
-                  )}
+                  <img src={item.icon} className="w-4 h-4" alt={`${item.label} logo`} />
                   <span className="hidden lg:block">{item.label}</span>
                 </NavLink>
               );
