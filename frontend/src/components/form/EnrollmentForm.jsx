@@ -7,8 +7,9 @@ import { toast } from 'react-toastify'
 import api from '../../utils/api'
 
 const schema = z.object({
-    sex: z.enum({message: "Please select one"}),
-    title: z.enum({message: "please choose one"})
+    studentId: z.coerce.number(),
+    semester: z.string().min(1,"Please select one"),
+    course: z.string().min(1, "please choose one")
 })
 
 const EnrollmentForm = ({type,data = {},onClose}) => {
@@ -36,14 +37,19 @@ const EnrollmentForm = ({type,data = {},onClose}) => {
         formState: {errors},}= useForm({
             resolver: zodResolver(schema),
             defaultValues: {
+                studentId: id,
                 ...data,
               },
         });
     
     const onSubmit = handleSubmit(async (data)=> {
         try {
-            console.log(data);
-            toast.success("course enrollment successfull")
+             const res = await api.post("/controllers/action.erollment.php",data);
+            if(res.data.success){
+                toast.success("course enrollment successfull")
+            }else{
+                toast.error(res.data.message);
+            }
         } catch (error) {
             console.error(error)
         }finally{
@@ -57,6 +63,7 @@ const EnrollmentForm = ({type,data = {},onClose}) => {
         </span>
 
         <div className="flex justify-between flex-wrap gap-4">
+            <InputFields label="StudentId" name="studentId" register={register} errors={errors} required type="hidden"/>
             <InputFields label="Semester" name="semester" type="select" options={[{label: "First",value:"First"},{label: "Second",value:"Second"}]} register={register} errors={errors} required inputProps={{
             onChange: (e) => setSemester(e.target.value),
             }}/>
