@@ -1,19 +1,21 @@
 // components/FormModal.jsx
 import React, { useState } from 'react';
 import TeacherForm from './form/TeacherForm';
+import EnrollmentForm from './form/EnrollmentForm';
 
 const tableToForm = {
   teacher: TeacherForm,
+  enrollement: EnrollmentForm,
 };
 
-const FormModal = ({ table, type, onClose = () => {} }) => {
+const FormModal = ({ table, type, title, onClose = () => {} }) => {
   const [isOpen,setIsOpen] = useState(false);
   const FormComponent = tableToForm[table];
   if (!FormComponent) return null;
 
   return (
     <>
-        <button className="flex justify-center items-center rounded-full bg-yellow-200 w-8 h-8 cursor-pointer" onClick={()=>setIsOpen(true)} title='create new teacher'>
+        <button className="flex justify-center items-center rounded-full bg-yellow-200 w-8 h-8 cursor-pointer" onClick={()=>setIsOpen(true)} title={title}>
             <img src={`/${type}.png`} alt={type} className='w-4 h-4'/>
         </button>
         {isOpen && (

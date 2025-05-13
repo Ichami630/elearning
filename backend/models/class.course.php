@@ -114,6 +114,29 @@ class Course {
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
+    //get courses in student department
+    public function getAllcourseNotEnrolled(int $id,string $semester): array{
+        $sql = "SELECT c.id AS course_id,co.id,c.title AS course_title,c.code AS course_code,
+    CONCAT(u.title,' ',u.name) AS instructor_name
+    FROM users s
+    JOIN course_offerings co ON (
+    co.department_id = s.department_id OR co.department_id IS NULL)
+    JOIN courses c ON co.course_id = c.id
+    LEFT JOIN users u ON co.instructor_id = u.id
+    WHERE s.id = ?
+    AND (c.course_type = 'general_all'
+    OR (c.course_type = 'general_dept' AND co.department_id = s.department_id)
+    OR (c.course_type = 'specific' AND co.department_id = s.department_id))
+    AND co.semester = ?";
+
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param('is',$id,$semester);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
 
 }
 

@@ -14,16 +14,19 @@ if ($_SERVER['REQUEST_METHOD'] === "GET") {
 
     $id = $_GET['id'] ?? null;
     $role = $_GET['role'] ?? null;
+    $semester = $_GET['semester'] ?? null;
 
     $courses = [];
 
-    if (isset($role)) {
+    if (isset($role) || isset($semester)) {
         if ($role === 'admin') {
             $courses = $course->getAllCourseNameThumbnail();
         } else if ($role === 'lecturer') {
             $courses = $course->getAllCourseOfLecturer((int)$id);
         } else if ($role === 'student') {
             $courses = $course->getAllStudentEnrolledCourses((int)$id);
+        }else if($semester === 'First' || $semester === 'Second'){
+            $courses = $course->getAllcourseNotEnrolled($id,$semester);
         } else {
             echo json_encode([
                 "success" => false,
