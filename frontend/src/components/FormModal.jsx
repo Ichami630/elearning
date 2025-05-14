@@ -3,11 +3,13 @@ import React, { useState } from 'react';
 import TeacherForm from './form/TeacherForm';
 import EnrollmentForm from './form/EnrollmentForm';
 import StudentForm from './form/StudentForm';
+import CourseForm from './form/CourseForm';
 
 const tableToForm = {
   teacher: TeacherForm,
   enrollement: EnrollmentForm,
   student: StudentForm,
+  course: CourseForm,
 };
 
 const FormModal = ({ table, type, title, onClose = () => {} }) => {

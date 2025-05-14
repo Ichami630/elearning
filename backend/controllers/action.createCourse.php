@@ -24,11 +24,21 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     $semester = $data->semester ?? null; // Get the semester from the request data or set it to null if not provided
     $instructorId = $data->instructorId ?? null; // Get the instructor ID from the request data or set it to null if not provided
 
+
     //first insert into the course table and then get the last insert id
     $course = new Course(); // Create a new Course object
     $course->setTitle($title); // Set the title property of the Course object
     $course->setCode($code); // Set the code property of the Course object
     $course->setCourseType($courseType); // Set the course type property of the Course object
+
+    //check if the coursecode is already taken
+    if($course->isCodeTaken()){
+        echo json_encode([
+            'success'=> false,
+            'da'=>$data,
+            'message' => 'course code already assign'
+        ]);exit;
+    }
     if($course->insert()){
         $courseId = $course->getLastInsertId(); // Get the last inserted course ID
 
@@ -42,14 +52,14 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
         $courseOfferings->setSemester($semester); // Set the semester property of the CourseOfferings object
         $courseOfferings->setInstructorId($instructorId); // Set the instructor ID property of the CourseOfferings object
         if($courseOfferings->insert()){
-            echo json_encode(['status' => 'success', 'message' => 'New course created successfully.']);
+            echo json_encode(['success' => true, 'message' => 'New course created successfully.']);
             exit;
         } else {
-            echo json_encode(['status' => 'error', 'message' => 'Failed to insert course offering.']);
+            echo json_encode(['success' => false, 'message' => 'Failed to insert course offering.']);
             exit;
         }
     } else {
-        echo json_encode(['status' => 'error', 'message' => 'Failed to insert course.']);
+        echo json_encode(['success' => false, 'message' => 'Failed to insert course.']);
         exit;
     }
 }

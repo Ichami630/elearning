@@ -85,6 +85,16 @@ class Course {
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
+    //check if the courseCode already exist
+    public function isCodeTaken(): bool {
+    $stmt = $this->database->prepare("SELECT id FROM courses WHERE code = ?");
+    $stmt->bind_param('s', $this->code);
+    $stmt->execute();
+    $stmt->store_result(); // Store the result to count rows
+    return $stmt->num_rows > 0; // Return true if a course with the same code exists
+    }
+
+
     //get distinct courses a lecturer teaches
     public function getAllCourseOfLecturer(int $lecturerId): array{
         $sql = "SELECT DISTINCT c.id,c.title,c.code,c.thumbnail
@@ -144,8 +154,8 @@ class Course {
 class CourseOfferings{
     private int $id;
     private int $courseId;
-    private int $depatmentId;
-    private int $optionId;
+    private ?int $depatmentId;
+    private ?int $optionId;
     private int $levelId;
     private string $academicYear;
     private string $semester;
@@ -167,8 +177,8 @@ class CourseOfferings{
     public function getSemester(): string { return $this->semester; }
     public function getInstructorId(): int { return $this->instructorId; }
     public function setCourseId(int $courseId): void { $this->courseId = $courseId; }
-    public function setDepartmentId(int $departmentId): void { $this->depatmentId = $departmentId; }
-    public function setOptionId(int $optionId): void { $this->optionId = $optionId; }
+    public function setDepartmentId(?int $departmentId): void { $this->depatmentId = $departmentId; }
+    public function setOptionId(?int $optionId): void { $this->optionId = $optionId; }
     public function setLevelId(int $levelId): void { $this->levelId = $levelId; }
     public function setAcademicYear(string $academicYear): void { $this->academicYear = $academicYear; }
     public function setSemester(string $semester): void { $this->semester = $semester; }
