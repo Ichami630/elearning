@@ -88,5 +88,18 @@ class Option {
         return $result->num_rows > 0; // Return true if option name exists, false otherwise
     }
 
+    //get all the options of a department
+    public function getOptionBydeptId(int $deptId): array{
+        $sql = "SELECT o.name,o.id FROM options o
+        JOIN departments d ON o.department_id = d.id
+        WHERE o.department_id = ?";
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param('i',$deptId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
 }
 ?>
