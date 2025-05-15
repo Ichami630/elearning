@@ -38,7 +38,7 @@ const CourseCard = () => {
                 {courses.slice(0,3).map((item,index)=>(
                     <NavLink key={index} to={`/dashboard/courses/${item.id}`} className="shadow-md cursor-pointer">
                         <img
-                            src="courseThumbnail/networking1.jpg"
+                            src={`courseThumbnail/${item.thumbnail === null ? 'networking1.jpg' : item.thumbnail}`}
                             alt="thumbnail"
                             className="w-full h-32 object-cover"
                         />

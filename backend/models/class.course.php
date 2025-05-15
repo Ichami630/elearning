@@ -28,7 +28,7 @@ class Course {
     public function getLastInsertId(): int { return $this->lastInsertId; }
     public function setTitle(string $title): void { $this->title = $title; }
     public function setCode(string $code): void { $this->code = $code; }
-    public function setThumbnail(string $thumbnail): void { $this->thumbnail = $thumbnail; }
+    public function setThumbnail(?string $thumbnail): void { $this->thumbnail = $thumbnail; }
     public function setCourseType(string $courseType): void { $this->courseType = $courseType; }
 
     //method to select a course by id
@@ -78,7 +78,11 @@ class Course {
     }
     //get courseThumnail,title
     public function getAllCourseNameThumbnail(): array{
-        $sql = "SELECT * FROM courses";
+        $sql = "SELECT c.id, c.title,c.code,c.thumbnail,u.name,l.name AS c_level FROM courses c
+        JOIN course_offerings co ON c.id=co.course_id
+        JOIN users u ON co.instructor_id = u.id
+        JOIN levels l ON co.level_id = l.id
+        ORDER BY c.id DESC";
         $stmt = $this->database->prepare($sql);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -97,10 +101,13 @@ class Course {
 
     //get distinct courses a lecturer teaches
     public function getAllCourseOfLecturer(int $lecturerId): array{
-        $sql = "SELECT DISTINCT c.id,c.title,c.code,c.thumbnail
+        $sql = "SELECT DISTINCT c.id,c.title,c.code,c.thumbnail,u.name,l.name AS c_level
         FROM courses c
         JOIN course_offerings co ON c.id = co.course_id
-        WHERE co.instructor_id = ?";
+        JOIN users u ON co.instructor_id = u.id
+        JOIN levels l ON co.level_id = l.id
+        WHERE co.instructor_id = ?
+        ORDER BY c.id DESC";
         $stmt = $this->database->prepare($sql);
         $stmt->bind_param('i',$lecturerId);
         $stmt->execute();
@@ -121,6 +128,21 @@ class Course {
         $stmt->execute();
         $result = $stmt->get_result();
 
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    //get all students enrolled in a course
+    public function getCourseEnroledStudents(int $courseId): array{
+        $sql = "SELECT u.id,u.name,u.email FROM courses c
+        JOIN course_offerings co ON c.id=co.course_id
+        JOIN enrollments e ON e.course_offering_id = co.id 
+        JOIN users u ON u.id = e.student_id
+        WHERE c.id = ? AND u.role = 'student'
+        ORDER BY c.id DESC";
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param('i',$courseId);
+        $stmt->execute();
+        $result = $stmt->get_result();
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 

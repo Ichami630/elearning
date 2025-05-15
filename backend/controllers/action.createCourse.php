@@ -1,4 +1,8 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 // Allow cross-origin requests
 header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Methods: POST,GET, OPTIONS");
@@ -7,38 +11,55 @@ header("Access-control-Allow-Credentials: true");
 
 include_once '../connection.php'; // Include the database connection file
 include_once '../models/class.course.php'; // Include the Course model class
+include_once '../models/class.fileUpload.php';
 $conn = Connection::getConnection(); // Get the database connection
 
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
-    $data = json_decode(file_get_contents("php://input"));
+    
 
-    $title = $data->title ?? null; // Get the title from the request data or set it to null if not provided
-    $code = $data->code ?? null; // Get the code from the request data or set it to null if not provided
-    $courseType = $data->courseType ?? null; // Get the course type from the request data or set it to null if not provided
+// Sanitize and get POST fields
+    $courseId = null;
+    $academicYear = $_POST['academicYear'] ?? null;
+    $semester = $_POST['semester'] ?? null;
+    $title = $_POST['title'] ?? null;
+    $code = $_POST['code'] ?? null;
+    $courseType = $_POST['courseType'] ?? null;
+    $optionId = $_POST['optionId'] ?? null;
+    $instructorId = $_POST['instructorId'] ?? null;
+    $levelId = $_POST['levelId'] ?? null;
+    $departmentId = $_POST['departmentId'] ?? null;
 
-    $courseId = null; // Initialize the variable without type declaration
-    $departmentId = $data->departmentId ?? null; // Get the department ID from the request data or set it to null if not provided
-    $optionId = $data->optionId ?? null; // Get the option ID from the request data or set it to null if not provided
-    $levelId = $data->levelId ?? null; // Get the level ID from the request data or set it to null if not provided
-    $academicYear = $data->academicYear ?? null; // Get the academic year from the request data or set it to null if not provided
-    $semester = $data->semester ?? null; // Get the semester from the request data or set it to null if not provided
-    $instructorId = $data->instructorId ?? null; // Get the instructor ID from the request data or set it to null if not provided
+    //handle file upload
+    $uploader = new FileUploader();
+    $uploadDir = "../../frontend/public/courseThumbnail";
+    $uploadResult = ['success' => true, 'filename' => null];
 
+    if (isset($_FILES['thumbnail'])) {
+        $uploadResult = $uploader->upload($_FILES['thumbnail'], $uploadDir);
+        if (!$uploadResult['success']) {
+            echo json_encode(['success' => false, 'message' => $uploadResult['message']]);
+            exit;
+        }
+    }
+
+    $thumbnail = $uploadResult['filename'];
 
     //first insert into the course table and then get the last insert id
     $course = new Course(); // Create a new Course object
     $course->setTitle($title); // Set the title property of the Course object
     $course->setCode($code); // Set the code property of the Course object
     $course->setCourseType($courseType); // Set the course type property of the Course object
+    $course->setThumbnail($thumbnail);
+
 
     //check if the coursecode is already taken
     if($course->isCodeTaken()){
         echo json_encode([
             'success'=> false,
-            'da'=>$data,
             'message' => 'course code already assign'
         ]);exit;
     }
+
     if($course->insert()){
         $courseId = $course->getLastInsertId(); // Get the last inserted course ID
 

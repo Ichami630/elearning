@@ -45,6 +45,8 @@ const CourseForm = ({type,data = {},onClose}) => {
     const [selectedCourseType, setSelectedCourseType] = useState("");
     const [departments,setDepartments] = useState([]);
     const [lecturers,setLecturers] = useState([]);
+    const [thumbnail, setThumbnail] = useState(null);
+
 
     //fetch all existing departments
     useEffect(()=>{
@@ -71,22 +73,37 @@ const CourseForm = ({type,data = {},onClose}) => {
     },[role]);
 
     
-    const onSubmit = handleSubmit(async (data)=> {
-        try {
-            console.log(data)
-            const res = await api.post("/controllers/action.createCourse.php",data);
-            console.log(res);
-            if(res.data.success){
-                toast.success("course creation and assignment successful");
-            }else{
-                toast.error(res.data.message);
-            }
-        } catch (error) {
-            console.error(error)
-        }finally{
-            onClose();
-        }
-    })
+ const onSubmit = handleSubmit(async (formData) => {
+  try {
+    const form = new FormData();
+
+    for (const key in formData) {
+      form.append(key, formData[key]);
+    }
+
+    if (thumbnail) {
+      form.append("thumbnail", thumbnail);
+    }
+
+    const res = await api.post("/controllers/action.createCourse.php", form, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    if (res.data.success) {
+      toast.success("Course creation and assignment successfull");
+    } else {
+      toast.error(res.data.message);
+    }
+  } catch (err) {
+    console.error(err);
+    toast.error("Error uploading course");
+  } finally {
+    onClose();
+  }
+});
+
   return (
     <form onSubmit={onSubmit} className='flex flex-col gap-4'>
         <span className="text-normal text-center text-gray-800 font-medium">
@@ -100,6 +117,11 @@ const CourseForm = ({type,data = {},onClose}) => {
             <InputFields label="course Type"   name="courseType" type="select" options={[{label:"General",value:"general_all"},{label:"Departmental",value:"specific"}]} register={register}
             inputProps={{onChange: ((e)=>setSelectedCourseType(e.target.value))}} required/>
             {selectedCourseType === 'specific' && <InputFields label="Department" name="departmentId" type="select" options={departments.map((d)=>({label:d.name,value:d.id}))} register={register} errors={errors} required/>}
+            <div className="flex flex-col">
+                <label htmlFor="thumbnail" className="text-sm font-medium text-gray-700">Thumbnail</label>
+                <input type="file" accept="image/png, image/jpeg, image/jpg" name="thumbnail" onChange={(e) => setThumbnail(e.target.files[0])}className="mt-1"/>
+            </div>
+
         </div>
 
         <span className="text-normal text-center text-gray-800 font-medium">

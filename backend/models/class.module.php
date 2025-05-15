@@ -63,10 +63,15 @@ class Module {
 
 
     // Method to select all modules for a specific course offering
-    public function selectByCourseOfferingId(int $courseOfferingId): array {
-        $sql = "SELECT * FROM modules WHERE course_offering_id = ?";
+    public function getCourseModules(int $courseId): array {
+        $sql = "SELECT m.title,ma.id,GROUP_CONCAT(DISTINCT ma.title) AS topics FROM modules m
+        LEFT JOIN materials ma ON m.id = ma.module_id
+        JOIN course_offerings co ON m.course_offering_id = co.id
+        JOIN courses c ON co.course_id = c.id
+        WHERE c.id = ?
+        GROUP BY M.title";
         $stmt = $this->database->prepare($sql);
-        $stmt->bind_param('i', $courseOfferingId);
+        $stmt->bind_param('i', $courseId);
         $stmt->execute();
         $result = $stmt->get_result(); // get the result set
 
