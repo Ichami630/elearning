@@ -17,6 +17,7 @@ import Enrollment from "./pages/dashboard/enrollment"
 import Student from "./pages/dashboard/student"
 import Course from "./pages/dashboard/course"
 import SingleCourse from "./components/SingleCourse"
+import Note from "./pages/dashboard/note"
 import Logout from "./pages/dashboard/logout"
 
 const App = () => {
@@ -53,6 +54,7 @@ const App = () => {
             <Route path="/dashboard/students" element={<Student />} />
             <Route path="/dashboard/subjects" element={<Course />} />
             <Route path="/dashboard/courses/:courseId" element={<SingleCourse />} />
+            <Route path="/dashboard/courses/:courseId/:title" element={<Note />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>

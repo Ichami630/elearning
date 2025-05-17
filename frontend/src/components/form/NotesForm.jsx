@@ -49,7 +49,7 @@ const NotesForm = ({ type, data = {}, onClose, rest }) => {
           "Content-Type": "multipart/form-data",
         },
       })
-
+      console.log(res.data);
       if (res.data.success) {
         toast.success(res.data.message)
       } else {

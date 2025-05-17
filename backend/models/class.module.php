@@ -7,6 +7,7 @@ class Module {
     private string $title;
     private ?string $description;
 
+    private $lastInsertId;
     protected $database;
 
     public function __construct() {
@@ -17,6 +18,7 @@ class Module {
     public function getCourseOfferingId(): string { return $this->courseOfferingId; }
     public function getTitle(): string { return $this->title; }
     public function getDescription(): ?string { return $this->description; }
+    public function getLastInsertId(): int { return $this->lastInsertId; }
     public function setCourseOfferingId(string $courseOfferingId): void { $this->courseOfferingId = $courseOfferingId; }
     public function setTitle(string $title): void { $this->title = $title; }
     public function setDescription(?string $description): void { $this->description = $description; }
@@ -42,7 +44,12 @@ class Module {
         $sql = "INSERT INTO modules (course_offering_id, title, description) VALUES (?, ?, ?)";
         $stmt = $this->database->prepare($sql);
         $stmt->bind_param('iss', $this->courseOfferingId, $this->title, $this->description);
-        return $stmt->execute();
+        if ($stmt->execute()) {
+            $this->lastInsertId = $stmt->insert_id; // get the last inserted id
+            return true;
+        } else {
+            return false;
+        }
     }
 
     // Method to update an existing module in the database
@@ -83,7 +90,6 @@ class Module {
 class Material {
     private int $moduleId;
     private string $title;
-    private ?string $description;
     private string $materialType;
     private ?string $content;
     private ?string $videoUrl;
@@ -91,21 +97,19 @@ class Material {
 
     protected $database;
 
-    public function _construct() {
+    public function __construct() {
         $this->database = Connection::getConnection(); // get the shared database connection
     }
 
     // Getters and setters for private properties
     public function getModuleId(): int { return $this->moduleId; }
     public function getTitle(): string { return $this->title; }
-    public function getDescription(): ?string { return $this->description; }
     public function getMaterialType(): string { return $this->materialType; }
     public function getContent(): ?string { return $this->content; }
     public function getVideoUrl(): ?string { return $this->videoUrl; }
     public function getFileUrl(): ?string { return $this->fileUrl; }
     public function setModuleId(int $moduleId): void { $this->moduleId = $moduleId; }
     public function setTitle(string $title): void { $this->title = $title; }
-    public function setDescription(?string $description): void { $this->description = $description; }
     public function setMaterialType(string $materialType): void { $this->materialType = $materialType; }
     public function setContent(?string $content): void { $this->content = $content; }
     public function setVideoUrl(?string $videoUrl): void { $this->videoUrl = $videoUrl; }
@@ -123,7 +127,6 @@ class Material {
         if ($material = $result->fetch_object()) {
             $this->moduleId = $material->module_id;
             $this->title = $material->title;
-            $this->description = $material->description;
             $this->materialType = $material->material_type;
             $this->content = $material->content;
             $this->videoUrl = $material->video_url;
@@ -133,17 +136,17 @@ class Material {
 
     // Method to insert a new material into the database
     public function insert(): bool {
-        $sql = "INSERT INTO materials (module_id, title, description, material_type, content, video_url, file_url) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO materials (module_id, title, material_type, content, video_url, file_url) VALUES ( ?, ?, ?, ?, ?, ?)";
         $stmt = $this->database->prepare($sql);
-        $stmt->bind_param('issssss', $this->moduleId, $this->title, $this->description, $this->materialType, $this->content, $this->videoUrl, $this->fileUrl);
+        $stmt->bind_param('isssss', $this->moduleId, $this->title, $this->materialType, $this->content, $this->videoUrl, $this->fileUrl);
         return $stmt->execute(); // return true if the insert was successful
     }
 
     // Method to update an existing material in the database
     public function update(int $id): bool {
-        $sql = "UPDATE materials SET module_id = ?, title = ?, description = ?, material_type = ?, content = ?, video_url = ?, file_url = ? WHERE id = ?";
+        $sql = "UPDATE materials SET module_id = ?, title = ?, material_type = ?, content = ?, video_url = ?, file_url = ? WHERE id = ?";
         $stmt = $this->database->prepare($sql);
-        $stmt->bind_param('issssssi', $this->moduleId, $this->title, $this->description, $this->materialType, $this->content, $this->videoUrl, $this->fileUrl, $id);
+        $stmt->bind_param('isssssi', $this->moduleId, $this->title, $this->materialType, $this->content, $this->videoUrl, $this->fileUrl, $id);
         return $stmt->execute(); // return true if the update was successful
     }
 
@@ -164,6 +167,20 @@ class Material {
         $result = $stmt->get_result(); // get the result set
 
         return $result->fetch_all(MYSQLI_ASSOC); // return all materials as an associative array
+    }
+
+    //get the content of a note from the title
+    public function getNoteContent(string $title): ?string {
+        $sql = "SELECT content FROM materials WHERE title = ?";
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param('s', $title);
+        $stmt->execute();
+        $result = $stmt->get_result(); // get the result set
+
+        if ($material = $result->fetch_object()) {
+            return $material->content; // return the content of the note
+        }
+        return null; // return null if no material found
     }
 }
 ?>
