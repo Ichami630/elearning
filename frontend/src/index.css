@@ -9,3 +9,17 @@
   .hide-scrollbar::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera */
   }
+.editor-content{
+  cursor: text;
+}
+.editor-content:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.editor-content [contenteditable="true"]:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}

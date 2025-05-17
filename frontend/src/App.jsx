@@ -6,6 +6,7 @@ import 'react-toastify/dist/ReactToastify.css'
 // Layouts
 import DashboardLayout from "./layouts/DashboardLayout"
 import MainLayout from "./layouts/MainLayout"
+import TipTap from "./components/Tiptap"
 
 //pages
 import NotFound from "./components/NotFound"
@@ -37,6 +38,7 @@ const App = () => {
            {/* Public Routes - Wrapped inside MainLayout */}
           <Route element={<MainLayout />}>
             <Route path="/login" element={<Login />} />
+            <Route path="/tiptap" element={<TipTap/>}/>
             <Route path="*" element={<NotFound />} />
           </Route>
 

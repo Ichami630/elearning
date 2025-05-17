@@ -1,9 +1,10 @@
-import { Tab, TabGroup, TabList, TabPanel, TabPanels,Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
-import { useParams } from 'react-router-dom';
+import {Tab, TabGroup, TabList, TabPanel, TabPanels,Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
+import { useParams,NavLink } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import api from '../utils/api';
 import Table from './Table';
-import { ChevronDownIcon } from '@heroicons/react/20/solid'
+import FormModal from './FormModal';
+import { ChevronDownIcon,LinkIcon } from '@heroicons/react/24/solid'
 
 const columns = [
   { header: "Student", accessor: "student" },
@@ -55,6 +56,7 @@ export default function SingleCourse() {
           const formattedModules = res.data.modules.map(module =>({
             ...module,
             topics: module.topics? module.topics.split(","): [],
+            type: module.type? module.type.split(","): [],
           }))
           setModules(formattedModules);
         }
@@ -76,6 +78,7 @@ export default function SingleCourse() {
   ];
 
   return (
+    <div>
     <TabGroup>
       <TabList className="flex space-x-2 border-b border-gray-400 mb-4 flex-col md:flex-row">
         {tabs.map((tab) => (
@@ -91,23 +94,47 @@ export default function SingleCourse() {
           </Tab>
         ))}
       </TabList>
-      <div className="p-4 bg-white rounded-md">
+      <div className="">
         <TabPanels>
-          <TabPanel>
-            <Disclosure>
-              <DisclosureButton className="group flex items-center gap-2">
-                Is team pricing available?
-                <ChevronDownIcon className="w-5 group-data-open:rotate-180 transition-transform duration-200" />
-              </DisclosureButton>
-              <DisclosurePanel className="text-gray-500">
-                Yes! You can purchase a license that you can share with your entire team.
-              </DisclosurePanel>
-            </Disclosure>
+          <TabPanel className="w-full lg:max-w-4xl">
+            {
+              modules.length === 0 ? (
+                <div className="p-4 text-center rounded-md text-red-500">** No Resources Available for this course **</div>
+              ):(
+            modules.map((module, index) => (
+              <div key={index} className="bg-white rounded-md shadow-sm p-4 mb-4">
+                <Disclosure>
+                  <DisclosureButton className="group text-md font-bold mb-4 flex justify-between w-full items-center gap-2">
+                    {module.title}
+                    <div className="w-7 h-7 rounded-full border border-gray-300 flex items-center justify-center transition-transform duration-200">
+                      <ChevronDownIcon className="w-4 h-4 group-data-[open]:rotate-180 transition-transform duration-200" />
+                    </div>
+                  </DisclosureButton>
+
+                  <div className="pl-2 space-y-2 text-sm">
+                    {module.topics.map((topic, index) => (
+                      <DisclosurePanel key={index} className="text-gray-600 flex gap-2">
+                        <LinkIcon className="w-5 text-blue-200" /> <NavLink to={`/dashboard/courses/${courseId}/${topic}`}className="hover:underline">
+                          [{module.type[index]}] {topic}
+                        </NavLink>
+                      </DisclosurePanel>
+                    ))}
+                  </div>
+                </Disclosure>
+              </div>
+            ))
+             )
+            }
           </TabPanel>
-          <TabPanel><Table columns={columns} data={participants} renderRow={renderRow} noResult={"No Student is currently enrolled in this course"} /></TabPanel>
+
+          <TabPanel className="p-4 bg-white rounded-md"><Table columns={columns} data={participants} renderRow={renderRow} noResult={"No Student is currently enrolled in this course"} /></TabPanel>
           <TabPanel>Content 3</TabPanel>
         </TabPanels>
       </div>
+      {role === 'lecturer' &&<div className="absolute cursor-pointer gap-2 flex text-center bottom-20 shadow-md right-10 w-[150px] items-center p-2 rounded-md bg-blue-500 text-white">
+        <FormModal table="notes" type="create" rest={courseId} /> <span className="text-md">New Notes</span>
+      </div>}
     </TabGroup>
+    </div>
   );
 }

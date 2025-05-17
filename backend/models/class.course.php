@@ -267,5 +267,18 @@ class CourseOfferings{
         return $courseOfferings; //return the array of course offerings
     }
 
+    //get the courseoffering id from the courseid
+    public function getCourseOfferingId(int $courseId): int {
+        $sql = "SELECT id FROM course_offerings WHERE course_id = ?";
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param('i', $courseId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($courseOffering = $result->fetch_object()) {
+            return (int)$courseOffering->id;
+        }
+        return 0; // Return 0 if no course offering found
+    }
+
 }
 ?>
