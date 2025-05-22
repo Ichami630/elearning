@@ -28,6 +28,7 @@ export default function SingleCourse() {
   const {courseId} = useParams();
   const [participants, setParticipants] = useState([]);
   const [modules,setModules] = useState([]);
+  const [selectedTab,setSelectedTab] = useState('');
 
   //fetch all students currently enrolled in this course
   useEffect(()=>{
@@ -73,6 +74,7 @@ export default function SingleCourse() {
       ? [
           { name: 'Assignments', key: 'assignments' },
           { name: 'Submissions', key: 'submissions' },
+          { name: 'Quizzes', key: 'quiz' },
         ]
       : [{ name: 'Grades', key: 'grades' }])
   ];
@@ -83,6 +85,7 @@ export default function SingleCourse() {
       <TabList className="flex space-x-2 border-b border-gray-400 mb-4 flex-col md:flex-row">
         {tabs.map((tab) => (
           <Tab
+            onClick={() => setSelectedTab(tab.key)}
             key={tab.key}
             className={({ selected }) =>
               `px-4 py-2 text-sm font-medium rounded-t-md focus:outline-none ${
@@ -125,15 +128,22 @@ export default function SingleCourse() {
             ))
              )
             }
+
+            {role === 'lecturer' && selectedTab === 'course' &&<div className="absolute cursor-pointer gap-2 flex text-center bottom-20 shadow-md right-10 w-[150px] items-center p-2 rounded-md bg-blue-500 text-white">
+              <FormModal table="notes" type="create" rest={courseId} /> <span className="text-md">New Notes</span>
+            </div>}
           </TabPanel>
 
           <TabPanel className="p-4 bg-white rounded-md"><Table columns={columns} data={participants} renderRow={renderRow} noResult={"No Student is currently enrolled in this course"} /></TabPanel>
           <TabPanel>Content 3</TabPanel>
+          <TabPanel>Content 4</TabPanel>
+          <TabPanel>
+                {role === 'lecturer' && selectedTab === 'quiz' &&<div className="absolute cursor-pointer gap-2 flex text-center bottom-20 shadow-md right-10 w-[150px] items-center p-2 rounded-md bg-blue-500 text-white">
+                <FormModal table="quiz" type="create" rest={courseId} /> <span className="text-md">Create Quiz</span>
+      </      div>}
+          </TabPanel>
         </TabPanels>
       </div>
-      {role === 'lecturer' &&<div className="absolute cursor-pointer gap-2 flex text-center bottom-20 shadow-md right-10 w-[150px] items-center p-2 rounded-md bg-blue-500 text-white">
-        <FormModal table="notes" type="create" rest={courseId} /> <span className="text-md">New Notes</span>
-      </div>}
     </TabGroup>
     </div>
   );

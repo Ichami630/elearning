@@ -18,6 +18,7 @@ import Student from "./pages/dashboard/student"
 import Course from "./pages/dashboard/course"
 import SingleCourse from "./components/SingleCourse"
 import Note from "./pages/dashboard/note"
+import StudentQuizPage from "./pages/dashboard/singleQuiz"
 import Logout from "./pages/dashboard/logout"
 
 const App = () => {
@@ -55,6 +56,7 @@ const App = () => {
             <Route path="/dashboard/subjects" element={<Course />} />
             <Route path="/dashboard/courses/:courseId" element={<SingleCourse />} />
             <Route path="/dashboard/courses/:courseId/:title" element={<Note />} />
+            <Route path="/dashboard/quiz/:quizId" element={<StudentQuizPage />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
