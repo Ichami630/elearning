@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import api from '../utils/api';
 import Table from './Table';
 import FormModal from './FormModal';
+import { FaEdit } from 'react-icons/fa';
 import { ChevronDownIcon,LinkIcon } from '@heroicons/react/24/solid'
 
 const columns = [
@@ -116,10 +117,14 @@ export default function SingleCourse() {
 
                   <div className="pl-2 space-y-2 text-sm">
                     {module.topics.map((topic, index) => (
-                      <DisclosurePanel key={index} className="text-gray-600 flex gap-2">
+                      <DisclosurePanel key={index} className="text-gray-600 flex flex-col gap-2">
+                        <div className="flex flex-row gap-4">
                         <LinkIcon className="w-5 text-blue-200" /> <NavLink to={`/dashboard/courses/${courseId}/${topic}`}className="hover:underline">
                           [{module.type[index]}] {topic}
-                        </NavLink>
+                        </NavLink></div>
+                        { role === 'lecturer' && (<div className="flex justify-end">
+                          <FaEdit className="w-4 h-4 cursor-pointer" title="Add new note under this module" />
+                        </div>) }
                       </DisclosurePanel>
                     ))}
                   </div>

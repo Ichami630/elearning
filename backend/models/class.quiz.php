@@ -51,6 +51,60 @@ class Quiz{
         }
     }
 
+    //get all the quizzes in the platform
+    public function getAllQuizzes(): array{
+        $sql = 'SELECT q.id,q.title,CONCAT(u.title," ",u.name) AS lecturer,d.name AS department,l.name AS level,c.code,c.title AS course_title,
+        q.date_added
+        FROM quizzes q
+        JOIN course_offerings co ON q.course_offering_id=co.id
+        JOIN courses c ON co.course_id=c.id
+        JOIN levels l ON co.level_id=l.id
+        JOIN departments d ON co.department_id=d.id
+        JOIN users u ON co.instructor_id=u.id
+        ORDER By q.date_added DESC';
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    //get quizzes in student department
+    public function getQuizzesByStudentDepartment(int $studentId): array{
+        $sql = 'SELECT q.id, q.title,
+       CONCAT(u.title, " ", u.name) AS lecturer,
+       d.name AS department,
+       l.name AS level,
+       c.code,
+       c.title AS course_title,
+       q.date_added
+        FROM users student
+        JOIN departments d ON student.department_id = d.id
+        JOIN course_offerings co ON co.department_id = student.department_id
+        JOIN quizzes q ON q.course_offering_id = co.id
+        JOIN courses c ON co.course_id = c.id
+        JOIN levels l ON co.level_id = l.id
+        JOIN users u ON co.instructor_id = u.id
+        WHERE student.id = ?
+        ORDER By q.date_added DESC';
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param('i',$studentId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    //function to get all students attempted quiz
+    public function getAttemptedQuiz(int $studentId): array{
+        $sql = "SELECT q.id FROM quizzes q
+        JOIN quiz_results qr ON q.id=qr.quiz_id
+        WHERE qr.student_id=?";
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param('i',$studentId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
 
 }
 
@@ -136,7 +190,7 @@ class Result{
         return $stmt->execute();
     }
 
-    
+
 
 }
 ?>
