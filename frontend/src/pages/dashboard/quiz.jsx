@@ -28,7 +28,7 @@ useEffect(() => {
       const res = await api.get("/controllers/action.quiz.php",{
         params:{role,studentId: id}
       });
-      
+      // console.log(res.data)
       if (res.data.success) {
         setQuizzes(res.data.quizzes);
       } else {

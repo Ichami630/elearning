@@ -9,15 +9,16 @@ class Mailer {
 
     public function __construct() {
         $this->mail = new PHPMailer(true);
+        $config = require __DIR__ . '/../config/config.php';
 
         // SMTP Config
         $this->mail->isSMTP();
-        $this->mail->Host       = 'smtp.gmail.com';
-        $this->mail->SMTPAuth   = true;
-        $this->mail->Username   = 'brandonichami@gmail.com'; // Your Gmail
-        $this->mail->Password   = 'wogjspdqecidsqvb';      // App Password (not your Gmail password)
-        $this->mail->SMTPSecure = 'tls';
-        $this->mail->Port       = 587;
+        $this->mail->Host       = $config['SMTP_HOST']; // Your SMTP Host
+        $this->mail->SMTPAuth   = $config['SMTP_AUTH'];
+        $this->mail->Username   = $config['SMTP_USERNAME']; // Your Gmail
+        $this->mail->Password   = $config['SMTP_SECRET'];      // App Password (not your Gmail password)
+        $this->mail->SMTPSecure = $config['SMTP_SECURE'];
+        $this->mail->Port       = $config['SMTP_PORT'];
 
         // Sender Info
         $this->mail->setFrom('brandonichami@gmail.com', 'Elearning Platform');

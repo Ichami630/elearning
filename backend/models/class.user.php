@@ -60,9 +60,9 @@ class User{
             $this->email = $user->email;
             $this->role = $user->role;
             $this->title = $user->title;
-            $this->departmentId = $user->departmentId;
-            $this->optionId = $user->optionId;
-            $this->levelId = $user->levelId;
+            $this->departmentId = $user->department_id;
+            $this->optionId = $user->option_id;
+            $this->levelId = $user->level_id;
             $this->password = $user->password; //stored hash password
         }
     }

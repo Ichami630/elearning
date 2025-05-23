@@ -8,12 +8,14 @@
     include_once("../models/class.quiz.php");
     include_once("../models/class.course.php");
     include_once("../services/class.phpmailer.php");
+    include_once("../models/class.user.php");
     $conn = Connection::getConnection();
     $quiz = new Quiz();
     $course = new Course();
     $q = new Questions();
     $r = new Result();
     $mailer = new Mailer();
+    $user = new User();
 
     if($_SERVER['REQUEST_METHOD'] === 'GET'){
         $role = $_GET['role'] ?? null;
@@ -59,7 +61,10 @@
         $r->setScore(sprintf("%.2f",$score));
         if(isset($data->studentId) && isset($data->quizId)){
             if($r->insert()){
-                $studentName = 'Vades';
+                //get the student details from the database
+                $user->select((int)$studentId);
+                $studentName = $user->getName();
+                $studentEmail = $user->getEmail();
                 $quizTitle = 'Computer Networks Quiz 1';
                 $marks = $score;
                 $total = 10;
@@ -67,7 +72,7 @@
 
                 $body = "
                     <h3>New Quiz Submission</h3>
-                    <p><strong>Student:</strong> $studentName</p>
+                    <p><strong>Student:</strong> $studentName,$studentEmail</p>
                     <p><strong>Quiz:</strong> $quizTitle</p>
                     <p><strong>Score:</strong> $marks / $total</p>
                     <p>Please log into the system for full details.</p>
