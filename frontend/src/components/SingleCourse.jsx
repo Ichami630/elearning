@@ -4,13 +4,20 @@ import { useEffect, useState } from 'react';
 import api from '../utils/api';
 import Table from './Table';
 import FormModal from './FormModal';
-import { FaEdit } from 'react-icons/fa';
+import { FaEdit,FaEye,FaTrash } from 'react-icons/fa';
 import { ChevronDownIcon,LinkIcon } from '@heroicons/react/24/solid'
 
 const columns = [
   { header: "Student", accessor: "student" },
   { header: "Email", accessor: "email"},
 ]
+
+const assignmentColumns = [
+  { header: "Title", accessor: "title" },
+  { header: "Due Date", accessor: "dueDate"},
+  {header: "Action",accessor:"action"}
+]
+
 
 export default function SingleCourse() {
   const renderRow = (item) => (
@@ -25,9 +32,31 @@ export default function SingleCourse() {
       </tr>
     );
 
+    const renderAssignmentRow = (item) => (
+      <tr key={item.id} className="border-b text-left border-gray-300 even:bg-slate-200 text-sm hover:bg-blue-200">
+        <td className="flex gap-4 p-4">
+          {item.title}
+        </td>
+        <td>{item.due_date}</td>
+        <td><div className="flex items-center gap-2">
+          <NavLink to={`/dashboard/assignment/${item.id}`} title='view'>
+              <button title='view this assignment' className="cursor-pointer w-8 h-8 flex items-center justify-center rounded-full bg-blue-100">
+                  <FaEye className='w-4 h-4' />
+              </button>
+          </NavLink>
+          {role === 'lecturer' && (
+              <button title="delete this assignment" className='cursor-pointer w-8 h-8 flex items-center justify-center rounded-full bg-gray-200'>
+                  <FaTrash className='w-4 h-4 text-red-400' />
+              </button>
+          )}
+        </div></td> 
+      </tr>
+    );
+
   const {role} = JSON.parse(localStorage.getItem('user'))
   const {courseId} = useParams();
   const [participants, setParticipants] = useState([]);
+  const [assignments,setAssignments] = useState([]);
   const [modules,setModules] = useState([]);
   const [selectedTab,setSelectedTab] = useState('');
 
@@ -46,6 +75,17 @@ export default function SingleCourse() {
       }
     }
     participants();
+
+    //fetch all asignments for this course
+    const assignments = async ()=>{
+      const res = await api.get("/controllers/action.assignment.php",{
+        params:{courseId}
+      })
+      if(res.data.success){
+        setAssignments(res.data.assignments);
+      }
+    }
+    assignments();
 
     //fetch all course resources
     const notes = async ()=>{
@@ -140,7 +180,14 @@ export default function SingleCourse() {
           </TabPanel>
 
           <TabPanel className="p-4 bg-white rounded-md"><Table columns={columns} data={participants} renderRow={renderRow} noResult={"No Student is currently enrolled in this course"} /></TabPanel>
-          <TabPanel>Content 3</TabPanel>
+          <TabPanel>
+            <div className="p-4 bg-white rounded-md">
+              <Table columns={assignmentColumns} data={assignments} renderRow={renderAssignmentRow} noResult={"No assignment available for this course"} />
+            </div>
+            {role === 'lecturer' && selectedTab === 'assignments' &&<div className="absolute cursor-pointer gap-2 flex text-center bottom-20 shadow-md right-10 w-[180px] items-center p-2 rounded-md bg-blue-500 text-white">
+              <FormModal table="assignment" type="create" rest={courseId} /> <span className="text-md">New Assignment</span>
+            </div>}
+          </TabPanel>
           <TabPanel>Content 4</TabPanel>
           <TabPanel>
                 {role === 'lecturer' && selectedTab === 'quiz' &&<div className="absolute cursor-pointer gap-2 flex text-center bottom-20 shadow-md right-10 w-[150px] items-center p-2 rounded-md bg-blue-500 text-white">

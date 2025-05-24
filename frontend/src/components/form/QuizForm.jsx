@@ -70,7 +70,7 @@ export default function QuizForm({ type, data = {}, onClose,rest}) {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 text-gray-500">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <h2 className="text-2xl text-left font-bold text-center">Create Quiz</h2>
+        <h2 className="text-2xl font-bold text-center">Create Quiz</h2>
 
         <InputFields label="courseId" name="courseId" type="hidden" register={register} errors={errors} required />
 

@@ -184,7 +184,7 @@ useEffect(() => {
               <button
                 onClick={handlePrevious}
                 disabled={currentQuestion === 0}
-                className={`px-4 py-2 - ${currentQuestion === 0 ? "cursor-not-allowed":"cursor-pointer"}  bg-gray-400 rounded bg-gray-300 text-gray-800 disabled:opacity-50`}              >
+                className={`px-4 py-2 - ${currentQuestion === 0 ? "cursor-not-allowed":"cursor-pointer"} rounded bg-gray-300 text-gray-800 disabled:opacity-50`}              >
                 Previous
               </button>
               {currentQuestion < quizData.questions.length - 1 ? (

@@ -99,7 +99,7 @@ useEffect(() => {
                 <div className="flex items-center flex-col gap-4">
                     <h4 className="text-xl font-semibold">Are you sure you want to attempt this quiz?</h4>
                     <div className="text-sm text-red-500">Note: You have just one trial</div>
-                    <div className="flex flex row gap-2">
+                    <div className="flex flex-row gap-2">
                         <button className="text-white bg-blue-500 p-2 rounded-md cursor-pointer" onClick={()=>{
                             setIsOpen(false);
                             navigate(`/dashboard/quiz/${selectedQuizId}`);

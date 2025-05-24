@@ -20,6 +20,7 @@ import SingleCourse from "./components/SingleCourse"
 import Note from "./pages/dashboard/note"
 import StudentQuizPage from "./pages/dashboard/singleQuiz"
 import Quiz from "./pages/dashboard/quiz"
+import Assignment from "./pages/dashboard/assignment"
 import Logout from "./pages/dashboard/logout"
 
 const App = () => {
@@ -59,6 +60,7 @@ const App = () => {
             <Route path="/dashboard/courses/:courseId/:title" element={<Note />} />
             <Route path="/dashboard/quiz" element={<Quiz />} />
             <Route path="/dashboard/quiz/:quizId" element={<StudentQuizPage />} />
+            <Route path="/dashboard/assignment/:assignmentId" element={<Assignment />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
