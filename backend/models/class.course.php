@@ -131,6 +131,21 @@ class Course {
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
+    //get the emails of the student enrolled in this course
+    public function getCourseStudentEmail(int $courseOfferingId): array{
+        $sql = "SELECT u.name,u.email FROM users u 
+        JOIN enrollments e ON u.id=e.student_id
+        JOIN course_offerings co ON co.id=e.course_offering_id
+        WHERE co.id = ?";
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param('i',$courseOfferingId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
+
+
+    }
+
     //get all students enrolled in a course
     public function getCourseEnroledStudents(int $courseId): array{
         $sql = "SELECT u.id,u.name,u.email FROM courses c

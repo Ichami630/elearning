@@ -118,5 +118,30 @@ class Submission{
         return $result->fetch_row()[0] > 0;
     }
 
+    //get the lectuere name from the assignment id
+    public function getLecturerNameByAssId(int $id): string{
+        $sql = "SELECT CONCAT(u.title,' ',u.name) AS lecturer FROM assignments a
+        JOIN submissions s ON a.id = s.assignment_id
+        JOIN course_offerings co ON a.course_offering_id = co.id
+        JOIN users u ON co.instructor_id = u.id
+        WHERE s.assignment_id = ?";
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param('i',$id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return $row['lecturer'] ?? '';
+
+    }
+
+    //get the grade and feedback left the lecturer for a particular submission
+    public function getGradeAndFeedback(int $submissionId): array {
+        $stmt = $this->database->prepare("SELECT student_id,grade, feedback FROM submissions WHERE id = ?");
+        $stmt->bind_param("i", $submissionId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_assoc() ?: [];
+    }
+
 }
 ?>

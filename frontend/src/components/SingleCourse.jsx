@@ -111,11 +111,11 @@ export default function SingleCourse() {
   const tabs = [
     { name: 'Course', key: 'course' },
     { name: 'Participants', key: 'participants' },
+    { name: 'Assignments', key: 'assignments' },
+    { name: 'Quizzes', key: 'quiz' },
     ...(role === 'lecturer'
       ? [
-          { name: 'Assignments', key: 'assignments' },
           { name: 'Submissions', key: 'submissions' },
-          { name: 'Quizzes', key: 'quiz' },
         ]
       : [{ name: 'Grades', key: 'grades' }])
   ];

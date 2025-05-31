@@ -6,7 +6,9 @@
 
     include_once("../models/class.submission.php");
     include_once '../models/class.fileUpload.php';
+    include_once("../services/class.phpmailer.php");
     $submission = new Submission();
+    $mailer = new Mailer();
 
     if($_SERVER['REQUEST_METHOD'] === 'GET'){
         //get all the submissions for a particular assignment
@@ -31,6 +33,13 @@
                 "message"=>"message or file cannot be empty"
             ]);exit;
         }else{
+            //check if the student has already submitted this assignment
+            if($submission->hasSubmitted((int)$_POST['assignmentId'], (int)$_POST['studentId'])){
+                echo json_encode([
+                    'success'=>false,
+                    'message'=>'You have already submitted this assignment,you cannot submit an assignment twice'
+                ]);exit;
+            }
             if(isset($_FILES['file'])){
                 $uploader = new FileUploader();
                 $uploadDir = "../../frontend/public/submissions";
@@ -41,15 +50,35 @@
                 }
                 $submission->setFileUrl($uploadResult['filename']);
             }
-            //check if the student has already submitted this assignment
-            if($submission->hasSubmitted((int)$_POST['assignmentId'], (int)$_POST['studentId'])){
-                echo json_encode([
-                    'success'=>false,
-                    'message'=>'You have already submitted this assignment,you cannot submit an assignment twice'
-                ]);exit;
-            }
             //now proceed to submit the assignment
             if($submission->insert()){
+                //get the name of the lecturer
+                $lecturer = $submission->getLecturerNameByAssId((int)$_POST['assignmentId']);
+                $studentName = trim($_POST['studentName']) ?? 'Unknown Student';
+                //now we process the email and send to the lecturer
+                $subject = "New Assignment Submission: " . $submission->getTitle();
+                $body = "Dear ".$lecturer.",<br> A new assignment has been submitted by student ".$studentName."<br><br>";
+
+                //if the submission has a file, attach it to the email
+                if($submission->getFileUrl()){
+                    $filePath = realpath($uploadDir . '/' . $submission->getFileUrl());
+                    $body .="Best Regards";
+                    if (!$mailer->sendWithAttachment("brandonichami630@gmail.com",$subject,$body,$filePath)){
+                        echo json_encode([
+                            'success'=>false,
+                            'message'=>'Submission created successfully, but failed to send email notification'
+                        ]);exit;
+                    }
+                }else{
+                    $message = $_POST['message'] ?? 'No message content.';
+                    $body .= "<br><br>Message from student:<br><i>{$message}</i><br><br>Best Regards";
+                    if (!$mailer->send("brandonichami630@gmail.com",$subject,$body)){
+                        echo json_encode([
+                            'success'=>false,
+                            'message'=>'Submission created successfully, but failed to send email notification'
+                        ]);exit;
+                    }
+                }
                 echo json_encode([
                     'success'=>true,
                     'message'=>'Submission created successfully'
@@ -61,6 +90,5 @@
                 ]);exit; 
             }
         }
-
-    }
+    }   
 ?>

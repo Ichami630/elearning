@@ -40,6 +40,29 @@ class Mailer {
         }
     }
 
+    //send email with attachement
+    public function sendWithAttachment($to, $subject, $body, $filePath) {
+        try {
+            $this->mail->clearAddresses();     // Clear previous recipients
+            $this->mail->clearAttachments();   // Clear any previous attachments
+            $this->mail->addAddress($to);
+            $this->mail->Subject = $subject;
+            $this->mail->Body    = $body;
+
+            // Attach file
+            if (file_exists($filePath)) {
+                $this->mail->addAttachment($filePath);
+            }
+
+            $this->mail->send();
+            return true;
+        } catch (Exception $e) {
+            error_log('Mailer Error: ' . $this->mail->ErrorInfo);
+            return false;
+        }
+    }
+
+
     public function getError() {
         return $this->mail->ErrorInfo;
     }

@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams,NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import Table from "../../components/Table";
@@ -7,26 +7,19 @@ import TipTap from "../../components/Tiptap";
 import { toast } from 'react-toastify'
 import api from "../../utils/api";
 
+const { role,id,name } = JSON.parse(localStorage.getItem("user"));
+
 const columns = [
   { header: "Discussion", accessor: "discussion" },
   { header: "Started By", accessor: "startedBy" },
   { header: "Date Submitted", accessor: "dateSubmitted", className: "hidden md:table-cell" },
+  { header: "Action", accessor: "action", className: role === 'lecturer' ? "block" : "hidden" },
 ];
 
-const renderRow = (item) => (
-  <tr
-    key={item.id}
-    className="border-b border-gray-300 even:bg-slate-200 text-sm hover:bg-blue-200"
-  >
-    <td className="flex items-center gap-4 p-4">{item.title}</td>
-    <td>{item.name}</td>
-    <td className="hidden md:table-cell">{item.submitted_at}</td>
-  </tr>
-);
+
 
 const Assignment = () => {
   const { assignmentId } = useParams();
-  const { role,id } = JSON.parse(localStorage.getItem("user"));
   const [submissions, setSubmissions] = useState([]);
   const [editorContent, setEditorContent] = useState("");
   const [showForm, setShowForm] = useState(false);
@@ -41,6 +34,20 @@ const Assignment = () => {
     description: "",
     dueDate: "",
   });
+
+  const renderRow = (item) => (
+  <tr
+    key={item.id}
+    className="border-b border-gray-300 even:bg-slate-200 text-sm hover:bg-blue-200"
+  >
+    <td className="flex items-center gap-4 p-4"><NavLink className="hover:underline" title="view lecturer feedback" to={`/dashboard/assignment/${assignmentId}/feedback/${item.id}`}>{item.title}</NavLink></td>
+    <td>{item.name}</td>
+    <td className="hidden md:table-cell">{item.submitted_at}</td>
+    {role === "lecturer" && <td>
+        <NavLink to={`/dashboard/assignment/${assignmentId}/feedback/${item.id}`} title="click here to grade this student" className="py-2 px-4 bg-blue-400 rounded-md text-white">Grade</NavLink>
+    </td>}
+  </tr>
+);
 
   useEffect(() => {
     const getAssignment = async () => {
@@ -82,6 +89,7 @@ const Assignment = () => {
     const payload = new FormData();
     payload.append("assignmentId", assignmentId);
     payload.append("studentId", id);
+    payload.append("studentName",name);
     payload.append("title", formData.title);
 
     if (contentType === "text") {
@@ -129,12 +137,11 @@ const Assignment = () => {
       <div className="bg-white p-4 rounded-md my-4">
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           <TableSearch />
-          <button
+          { role === 'student' && <button
             className="p-2 rounded-md cursor-pointer bg-blue-400 hover:bg-blue-500 text-white text-sm"
-            onClick={() => setShowForm(true)}
-          >
+            onClick={() => setShowForm(true)}>
             Add Discussion
-          </button>
+          </button>}
         </div>
 
         {showForm && (

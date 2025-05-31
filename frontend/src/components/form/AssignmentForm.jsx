@@ -38,17 +38,17 @@ const AssignmentForm = ({ type, data = {}, onClose, rest }) => {
       // Append editor content
       form.append("noteContent", editorContent)
 
-      console.log("Form data to be sent:")
-      for (let [key, value] of form.entries()) {
-        console.log(`${key}: ${value}`)
-      }
+      // console.log("Form data to be sent:")
+      // for (let [key, value] of form.entries()) {
+      //   console.log(`${key}: ${value}`)
+      // }
 
     const res = await api.post("/controllers/action.assignment.php", form, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       })
-      console.log(res.data);
+      // console.log(res.data);
       if (res.data.success) {
         toast.success(res.data.message)
       } else {

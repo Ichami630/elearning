@@ -75,5 +75,19 @@ class Assignment{
         $result = $stmt->get_result();
         return $result->fetch_assoc();
     }
+
+    //get all assignments on the courses the student is studying
+    public function getStudentAssignments(int $studentId): array {
+        $sql = "SELECT a.id,c.title AS course_title,c.code,a.title,a.due_date FROM assignments a
+        JOIN course_offerings co ON a.course_offering_id=co.id
+        JOIN courses c ON co.course_id=c.id
+        JOIN enrollments e ON co.id=e.course_offering_id
+        WHERE e.student_id = ? OR co.instructor_id = ?";
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param("ii", $studentId, $studentId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
 }
 ?>

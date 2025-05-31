@@ -7,6 +7,7 @@ import CourseForm from './form/CourseForm';
 import NotesForm from './form/NotesForm';
 import QuizForm from './form/QuizForm';
 import AssignmentForm from './form/AssignmentForm';
+import FeedbackForm from './form/FeedbackForm';
 
 const tableToForm = {
   teacher: TeacherForm,
@@ -16,6 +17,7 @@ const tableToForm = {
   notes: NotesForm,
   quiz: QuizForm,
   assignment: AssignmentForm,
+  feedback: FeedbackForm,
 };
 
 const FormModal = ({ table, type, title, onClose = () => {},...rest }) => {
