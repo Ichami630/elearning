@@ -3,13 +3,15 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import InputFields from '../InputFields'
 import { toast } from 'react-toastify'
-import TipTap from '../Tiptap'
+import TipTap from '../TipTap'
+import TinyMCE from '../TinyMCE'
 import { useState } from 'react'
 import api from '../../utils/api'
 
 const schema = z.object({
   courseId: z.string(),
   title: z.string().min(2, { message: "title is required" }),
+  marks: z.coerce.number().min(0, { message: "marks must be a positive number" }),
   dueDate: z.string().min(2, { message: "due date is required" }),
 })
 
@@ -48,6 +50,7 @@ const AssignmentForm = ({ type, data = {}, onClose, rest }) => {
           "Content-Type": "multipart/form-data",
         },
       })
+      console.log(res.data)
       // console.log(res.data);
       if (res.data.success) {
         toast.success(res.data.message)
@@ -73,9 +76,11 @@ const AssignmentForm = ({ type, data = {}, onClose, rest }) => {
         <InputFields label="courseId" name="courseId" type="hidden" register={register} errors={errors} required />
         <InputFields label="title" name="title" type="text" register={register} errors={errors} required />
         <InputFields label="Due Date" name="dueDate" type="datetime-local" register={register} errors={errors} required />
+        <InputFields label="Total Marks" name="marks" type="number" register={register} errors={errors} required />
         <div className="w-full text-left">
             <label className="block text-xs text-gray-500">Assignment Description <span className="text-red-500">*</span></label>
-            <TipTap value={editorContent} onChange={setEditorContent} />
+            {/* <TipTap value={editorContent} onChange={setEditorContent} /> */}
+            <TinyMCE onEditorChange={setEditorContent} />
         </div>
       </div>
 

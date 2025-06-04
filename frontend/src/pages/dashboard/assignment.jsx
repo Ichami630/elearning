@@ -3,11 +3,14 @@ import { useEffect, useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import Table from "../../components/Table";
 import TableSearch from "../../components/TableSearch";
-import TipTap from "../../components/Tiptap";
+import TipTap from "../../components/TipTap";
 import { toast } from 'react-toastify'
 import api from "../../utils/api";
 
-const { role,id,name } = JSON.parse(localStorage.getItem("user"));
+
+
+const Assignment = () => {
+  const { role,id,name } = JSON.parse(localStorage.getItem("user"));
 
 const columns = [
   { header: "Discussion", accessor: "discussion" },
@@ -15,10 +18,6 @@ const columns = [
   { header: "Date Submitted", accessor: "dateSubmitted", className: "hidden md:table-cell" },
   { header: "Action", accessor: "action", className: role === 'lecturer' ? "block" : "hidden" },
 ];
-
-
-
-const Assignment = () => {
   const { assignmentId } = useParams();
   const [submissions, setSubmissions] = useState([]);
   const [editorContent, setEditorContent] = useState("");

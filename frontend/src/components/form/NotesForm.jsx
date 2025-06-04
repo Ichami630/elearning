@@ -3,7 +3,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import InputFields from '../InputFields'
 import { toast } from 'react-toastify'
-import TipTap from '../Tiptap'
+import TipTap from '../TipTap'
+import TinyMCE from '../TinyMCE'
 import { useState } from 'react'
 import api from '../../utils/api'
 
@@ -89,7 +90,8 @@ const NotesForm = ({ type, data = {}, onClose, rest }) => {
         <InputFields label="Note Title" name="noteTitle" type="text" register={register} errors={errors} required />
         <div className="w-full text-left">
             <label className="block text-xs text-gray-500">Note Content <span className="text-red-500">*</span></label>
-            <TipTap value={editorContent} onChange={setEditorContent} />
+            {/* <TipTap value={editorContent} onChange={setEditorContent} /> */}
+            <TinyMCE onEditorChange={setEditorContent} />
         </div>
       </div>
 

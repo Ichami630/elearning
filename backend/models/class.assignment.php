@@ -7,6 +7,7 @@ class Assignment{
     private int $courseOfferingId;
     private string $title;
     private string $description;
+    private int $marks;
     private ?string $dueDate;
 
     protected $database;
@@ -39,6 +40,12 @@ class Assignment{
     public function setDescription(string $description): void {
         $this->description = $description;
     }
+    public function getMarks(): int {
+        return $this->marks;
+    }
+    public function setMarks(int $marks): void {
+        $this->marks = $marks;
+    }
     public function getDueDate(): ?string {
         return $this->dueDate;
     }
@@ -47,8 +54,8 @@ class Assignment{
     }
 
     public function insert(): bool {
-        $stmt = $this->database->prepare("INSERT INTO assignments (course_offering_id, title, description, due_date) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("isss", $this->courseOfferingId, $this->title, $this->description, $this->dueDate);
+        $stmt = $this->database->prepare("INSERT INTO assignments (course_offering_id, title, description,marks, due_date) VALUES (?, ?, ?, ?,?)");
+        $stmt->bind_param("issis", $this->courseOfferingId, $this->title, $this->description,$this->marks, $this->dueDate);
         return $stmt->execute();
     }
 
@@ -67,7 +74,7 @@ class Assignment{
 
     //get the assignment details by it's id
     public function getAssignment(int $assignmentId): array{
-        $sql = "SELECT a.id,a.title,a.description,a.due_date FROM assignments a
+        $sql = "SELECT a.id,a.title,a.description,a.marks,a.due_date FROM assignments a
         WHERE a.id = ?";
         $stmt = $this->database->prepare($sql);
         $stmt->bind_param("i", $assignmentId);

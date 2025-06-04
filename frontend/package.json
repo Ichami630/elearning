@@ -13,6 +13,7 @@
     "@headlessui/react": "^2.2.3",
     "@heroicons/react": "^2.2.0",
     "@tailwindcss/vite": "^4.1.5",
+    "@tinymce/tinymce-react": "^6.2.1",
     "@tiptap/extension-bold": "^2.12.0",
     "@tiptap/extension-bullet-list": "^2.12.0",
     "@tiptap/extension-code-block": "^2.12.0",

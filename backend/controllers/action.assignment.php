@@ -17,6 +17,7 @@
         $courseId = $_POST['courseId'] ?? null;
         $title = $_POST['title'] ?? null;
         $description = $_POST['noteContent'] ?? null;
+        $marks = $_POST['marks'] ?? 0; // Default marks to 0 if not provided
         $dueDate = $_POST['dueDate'] ?? null;
 
         //get the courseoffering from the course id
@@ -27,6 +28,7 @@
             $assignment->setCourseOfferingId((int)$courseOfferingId);
             $assignment->setTitle($title);
             $assignment->setDescription($description);
+            $assignment->setMarks((int)$marks);
             $assignment->setDueDate($dueDate);
             //insert into the assignment table
             if($assignment->insert()){
