@@ -3,14 +3,34 @@ import UserCard from '../../components/UserCard'
 import api from '../../utils/api'
 import Announcements from '../../components/Announcement'
 import CourseCard from '../../components/CourseCard'
+import CountChart from '../../components/CountChart'
+
+// const data = [
+//   {
+//     name: "Total",
+//     count: 106,
+//     fill: "white",
+//   },
+//   {
+//     name: "Girls",
+//     count: 53,
+//     fill: "#FAE27C",
+//   },
+//   {
+//     name: "Boys",
+//     count: 53,
+//     fill: "#C3EBFA",
+//   },
+// ];
 
 const Home = () => {
-
+  const {role,id} = JSON.parse(localStorage.getItem('user'))
   const [totals, setTotals] = useState({
     students: 0,
     lecturers: 0,
     admins: 0,
   })
+  const [data,setData] = useState([]);
 
   useEffect(() => {
     const fetchTotals = async () => {
@@ -28,8 +48,19 @@ const Home = () => {
       }
     }
 
+    const fetchCountData = async () =>{
+      const res = await api.get("/controllers/action.getTotalUsers.php",{
+        params:{id,role}
+      });
+      console.log(res.data)
+      if(res.data.success){
+        setData(res.data.result);
+      }
+    }
+
+    fetchCountData()
     fetchTotals()
-  }, [])
+  }, [id,role])
 
   return (
     <div className='flex gap-4 flex-col md:flex-row'>
@@ -39,6 +70,13 @@ const Home = () => {
           <UserCard type="students" total={totals.students} />
           <UserCard type="lecturers" total={totals.lecturers} />
           <UserCard type="admins" total={totals.admins} />
+        </div>
+        {/* MIDDLE */}
+        <div className="flex flex-col lg:flex-row gap-4">
+          {/* COUNT CHART */}
+          <div className="w-full lg:w-1/3 h-[450px]">
+            <CountChart data={data} />
+          </div>
         </div>
       </div>
       {/* RIGHT */}

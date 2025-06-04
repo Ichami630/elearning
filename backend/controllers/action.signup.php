@@ -18,6 +18,7 @@
         $departmentId = $data->departmentId ?? null;
         $optionId = $data->optionId ?? null;
         $levelId = $data->levelId ?? null;
+        $sex = $data->sex ?? null;
 
         //create user object
         $user = new User();
@@ -26,6 +27,7 @@
         $user->setEmail(trim($email));
         $user->setPassword($password);
         $user->setRole(trim($role));
+        $user->setSex(trim($sex));
         $user->setTitle(trim($title));
         $user->setDepartmentId(is_numeric($departmentId) ? (int)$departmentId : null);
         $user->setOptionId(is_numeric($optionId) ? (int)$optionId : null);

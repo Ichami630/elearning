@@ -46,7 +46,7 @@ const Enrollment = () => {
       </td>
       <td className="hidden md:table-cell">Mr John</td>
       <td><div className="flex items-center gap-2">
-            <NavLink to={`/dashboard/teachers/${item.id}`} title='view'>
+            <NavLink to={`/dashboard/courses/${item.id}`} title='view'>
                 <button title='access course material' className="cursor-pointer w-8 h-8 flex items-center justify-center rounded-full bg-blue-100">
                     <FaEye className='w-4 h-4' />
                 </button>

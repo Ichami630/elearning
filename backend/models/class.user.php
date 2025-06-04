@@ -8,6 +8,7 @@ class User{
     private string $email;
     private string $password;
     private string $role;
+    private string $sex;
     private ?string $title;
     private ?int $departmentId;
     private ?int $optionId;
@@ -30,6 +31,7 @@ class User{
     public function getName(): string { return $this->name;}
     public function getEmail(): string{ return $this->email;}
     public function getRole(): string{ return $this->role;}
+    public function getSex(): string{return $this->sex;}
     public function getTitle(): string{ return $this->title;}
     public function getDepartmentId(): int{return $this->departmentId;}
     public function getOptionId(): int{return $this->optionId;}
@@ -39,6 +41,7 @@ class User{
     public function setName(string $name): void{ $this->name = $name;}
     public function setEmail(string $email): void{ $this->email = $email;}
     public function setRole(string $role): void { $this->role = $role;}
+    public function setSex(string $sex): void { $this->sex = $sex;}
     public function setTitle(string $title): void { $this->title = $title;}
     public function setDepartmentId(?int $deptId): void { $this->departmentId = $deptId;}
     public function setOptionId(?int $optionId): void { $this->optionId = $optionId;}
@@ -59,6 +62,7 @@ class User{
             $this->name = $user->name;
             $this->email = $user->email;
             $this->role = $user->role;
+            $this->sex = $user->sex;
             $this->title = $user->title;
             $this->departmentId = $user->department_id;
             $this->optionId = $user->option_id;
@@ -78,6 +82,28 @@ class User{
         return (int)$rows->tot; //return the total count
     }
 
+    //select the total male and females students
+    public function getStudents(?int $id, string $role): array {
+    $sql  = "SELECT sex AS name, COUNT(*) AS count FROM users WHERE role = 'student'";
+
+    if (!is_null($id) && $role === 'student') {
+        $sql .= " AND department_id = (SELECT department_id FROM users WHERE id = ?)";
+    }
+
+    $sql .= " GROUP BY sex";
+
+    $stmt = $this->database->prepare($sql);
+
+    if (!is_null($id) && $role === 'student') {
+        $stmt->bind_param("i", $id);
+    }
+
+    $stmt->execute();
+    $result = $stmt->get_result();
+    return $result->fetch_all(MYSQLI_ASSOC);
+}
+
+
     // method to delete a user by id
     public function delete(int $id){
         $sql = "DELETE FROM users WHERE id = ?";
@@ -88,9 +114,9 @@ class User{
 
     //methos to create a new user
     public function insert(): bool {
-        $sql = "INSERT INTO users(name,email,password,role,title,department_id,option_id,level_id) VALUES(?,?,?,?,?,?,?,?)";
+        $sql = "INSERT INTO users(name,email,sex,password,role,title,department_id,option_id,level_id) VALUES(?,?,?,?,?,?,?,?,?)";
         $stmt = $this->database->prepare($sql);
-        $stmt->bind_param("sssssiii",$this->name,$this->email,$this->password,$this->role,$this->title,$this->departmentId,$this->optionId,$this->levelId);
+        $stmt->bind_param("ssssssiii",$this->name,$this->email,$this->sex,$this->password,$this->role,$this->title,$this->departmentId,$this->optionId,$this->levelId);
         if($stmt->execute()){
             $this->lastid = $stmt->insert_id; //captures the last inserted id
             return true;

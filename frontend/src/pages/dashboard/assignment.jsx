@@ -4,6 +4,7 @@ import { FaEdit } from "react-icons/fa";
 import Table from "../../components/Table";
 import TableSearch from "../../components/TableSearch";
 import TipTap from "../../components/TipTap";
+import TinyMCE from "../../components/TinyMCE"
 import { toast } from 'react-toastify'
 import api from "../../utils/api";
 
@@ -179,7 +180,8 @@ const columns = [
                 <label htmlFor="content" className="font-semibold">
                   Content
                 </label>
-                <TipTap value={editorContent} onChange={setEditorContent} />
+                {/* <TipTap value={editorContent} onChange={setEditorContent} /> */}
+                 <TinyMCE onEditorChange={setEditorContent} /> 
               </div>
             ) : (
               <div className="flex flex-col w-full md:max-w-[760px]">
