@@ -24,6 +24,7 @@ import Quiz from "./pages/dashboard/quiz"
 import Assignment from "./pages/dashboard/assignment"
 import Feedback from "./pages/dashboard/feedback"
 import AssignmentPage from "./pages/dashboard/assignmentPage"
+import Profile from "./pages/dashboard/profile"
 import Logout from "./pages/dashboard/logout"
 
 const App = () => {
@@ -66,6 +67,7 @@ const App = () => {
             <Route path="/dashboard/quiz/:quizId" element={<StudentQuizPage />} />
             <Route path="/dashboard/assignment/:assignmentId" element={<Assignment />} />
             <Route path="/dashboard/assignments" element={<AssignmentPage />} />
+            <Route path="/dashboard/profile" element={<Profile />} />
             <Route path="/dashboard/assignment/:assignmentId/feedback/:submissionId" element={<Feedback />} />
             <Route path="*" element={<NotFound />} />
           </Route>

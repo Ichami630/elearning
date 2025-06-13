@@ -105,6 +105,24 @@ class Quiz{
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
+    //get student pending quizzes
+    public function getPendingQizzes(int $studentId): int{
+        $sql = "SELECT COUNT(*) AS pending_quizzes FROM quizzes q
+        JOIN enrollments e ON q.course_offering_id = e.course_offering_id
+        WHERE e.student_id = ?
+        AND (
+        SELECT 1 
+        FROM quiz_results qr
+        WHERE qr.quiz_id = q.id 
+        AND qr.student_id = e.student_id)";
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param('i',$studentId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return (int)$row["pending_quizzes"];
+    }
+
 
 }
 

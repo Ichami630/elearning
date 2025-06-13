@@ -96,5 +96,24 @@ class Assignment{
         $result = $stmt->get_result();
         return $result->fetch_all(MYSQLI_ASSOC);
     }
+
+    //get student pending assignments
+    public function getPendingAssignments(int $studentId): int{
+        $sql = "SELECT COUNT(*) AS pending_assignments
+        FROM assignments a
+        JOIN enrollments e ON a.course_offering_id = e.course_offering_id
+        WHERE e.student_id = ?
+        AND NOT EXISTS (
+        SELECT 1
+        FROM submissions s
+        WHERE s.assignment_id = a.id
+        AND s.student_id = e.student_id)";
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param('i',$studentId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return (int)$row["pending_assignments"];
+    }
 }
 ?>

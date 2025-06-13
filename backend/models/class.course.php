@@ -295,5 +295,19 @@ class CourseOfferings{
         return $courseOfferings; //return the array of course offerings
     }
 
+    //get the department and level of the student
+    //from the department id
+    public function getDeptLevel(int $deptId): array{
+        $sql = "SELECT DISTINCT(d.name) AS dept,l.name AS level FROM course_offerings co
+        JOIN departments d ON co.department_id = d.id
+        JOIN levels l ON co.level_id = l.id
+        WHERE d.id = ?";
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param('i',$deptId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
 }
 ?>

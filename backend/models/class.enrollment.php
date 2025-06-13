@@ -76,5 +76,19 @@ class Enrollment{
 
         return (int)$result->fetch_assoc()['count']; // return the count as an integer
     }
+
+    //get student enrolledcourse with lecturer name
+    public function getEnrolledCoursesExtended(int $studentId): array{
+        $sql = "SELECT CONCAT(u.title, '. ', u.name) AS lecturer, c.title FROM enrollments e
+        JOIN course_offerings co ON e.course_offering_id = co.id
+        JOIN courses c ON co.course_id = c.id
+        JOIN users u ON co.instructor_id = u.id
+        WHERE e.student_id = ?";
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param('i',$studentId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
 }
 ?>
